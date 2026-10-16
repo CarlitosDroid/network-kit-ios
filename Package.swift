@@ -5,6 +5,8 @@ let package = Package(
     name: "NetworkKit",
     platforms: [
         .iOS(.v17),
+        // Needed so `swift build`/`swift test` on a macOS host can use OSLog's Logger.
+        .macOS(.v11),
     ],
     products: [
         .library(
