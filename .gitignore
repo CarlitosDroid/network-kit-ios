@@ -1,0 +1,17 @@
+.DS_Store
+/.build
+/Packages
+xcuserdata/
+DerivedData/
+.swiftpm/configuration/registries.json
+.swiftpm/xcode/package.xcworkspace/contents.xcworkspacedata
+
+# Generated Xcode project (SwiftPM generates it on demand)
+*.xcodeproj
+*.xcworkspace
+
+# Tuist/Xcode derived files
+Derived/
+
+# Node (semantic-release installs plugins at CI time)
+node_modules/

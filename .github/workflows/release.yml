@@ -1,0 +1,62 @@
+name: Production Release
+
+# Runs on push to main. semantic-release decides the version from conventional
+# commits; if a release is warranted it creates the tag + GitHub Release.
+# Source-only distribution: the tag IS the release (consume via .package(url:, from:)).
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write        # required for semantic-release to tag + create the release
+  issues: write          # semantic-release "success" step comments on issues
+  pull-requests: write   # semantic-release "success" step comments on PRs
+
+jobs:
+  release:
+    name: Test & Release
+    runs-on: macos-15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # semantic-release needs full history
+
+      - name: Set up Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: "16.4"
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Test
+        run: swift test
+
+      # Only publishes on push to main (not on PRs).
+      - name: Semantic Release
+        if: github.event_name == 'push'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          npm install --no-save \
+            semantic-release \
+            @semantic-release/commit-analyzer \
+            @semantic-release/release-notes-generator \
+            @semantic-release/changelog \
+            @semantic-release/git \
+            @semantic-release/github \
+            conventional-changelog-conventionalcommits
+          npx semantic-release
