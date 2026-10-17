@@ -12,15 +12,12 @@ default headers, timeout); the library never reads `Bundle.main` or build settin
 
 ## Installation
 
-Swift Package Manager:
+### Xcode
 
-```swift
-dependencies: [
-    .package(url: "https://github.com/CarlitosDroid/network-kit-ios.git", from: "1.0.0"),
-]
-```
-
-Then add the `NetworkKit` product to your target.
+1. **File → Add Package Dependencies…**
+2. Enter `https://github.com/CarlitosDroid/network-kit-ios.git`.
+3. Dependency rule: *Up to Next Major Version* from `1.0.0`.
+4. Add the **NetworkKit** product to your app target. Alamofire is resolved automatically.
 
 ### Tuist
 
@@ -32,6 +29,7 @@ import struct ProjectDescription.PackageSettings
 let packageSettings = PackageSettings(
     productTypes: [
         "Alamofire": .framework,
+        "NetworkKit": .framework,
     ]
 )
 #endif
@@ -50,6 +48,21 @@ dependencies: [
     .external(name: "NetworkKit"),
 ]
 ```
+
+Then run `tuist install && tuist generate`.
+
+> Marking `NetworkKit` as `.framework` avoids Tuist's static-linking warning (and duplicated types)
+> when it is linked from more than one target, e.g. the app and a feature framework.
+
+### Swift Package Manager
+
+```swift
+dependencies: [
+    .package(url: "https://github.com/CarlitosDroid/network-kit-ios.git", from: "1.0.0"),
+]
+```
+
+Then add the `NetworkKit` product to your target.
 
 ## Usage
 
